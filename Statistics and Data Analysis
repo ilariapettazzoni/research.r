@@ -1,0 +1,23 @@
+22/01/24
+Statistics and Data Analysis
+
+#Exercise 1
+
+n=10
+a=0
+g=0
+h=0
+v1=runif(n,1,100)
+
+for(i in 1:50) {v1=runif(n,1,100)
+ arit=mean(v1)
+ geom=prod(v1)^(1/length(v1))
+ harmo=1/mean(1/v1)
+ M=c(arit,geom,harmo)
+ if (arit==max(M)) a=a+1
+if (geom==max(M)) g=g+1
+if (harmo==max(M)) h=h+1
+}
+a
+g
+h

@@ -1,13 +1,13 @@
 22/01/24
 Statistics and Data Analysis
 
-#Exercise 1
+#Exercise 1 
 
 n=10
 a=0
 g=0
 h=0
-v1=runif(n,1,100)
+
 
 for(i in 1:50) {v1=runif(n,1,100)
  arit=mean(v1)
@@ -21,3 +21,27 @@ if (harmo==max(M)) h=h+1
 a
 g
 h
+
+#Exercise 2a
+mean(1:4)+mean(1:6)+mean(1:8)+mean(1:10)+mean(1:12)+mean(1:20) #beacuse they are independent
+
+
+
+#Exercise 1b
+v=1:15
+cards=v[v!=14]
+cards
+card.densities = c(rep(4/54,13),2/54)
+card.densities
+sum(card.densities)
+sum(cards*card.densities)
+
+
+#Exercise 3
+vector=seq(from=1, to=100, by=0.1)
+for(i in 1:991){
+ln=(log(vector)/vector)}
+plot(ln)
+mean(ln)
+
+

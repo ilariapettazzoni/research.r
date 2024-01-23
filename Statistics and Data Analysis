@@ -38,10 +38,23 @@ sum(cards*card.densities)
 
 
 #Exercise 3
-vector=seq(from=1, to=100, by=0.1)
-for(i in 1:991){
-ln=(log(vector)/vector)}
-plot(ln)
-mean(ln)
+
+n=10
+integral.means=numeric()  #to create an empty vector that will contain numerical variables
+actual.means=numeric()
+for(i in 1:5){
+sigman=seq(from=1, to=n, by=10^(-i))                                      # create a decompositio composed of smaller steps
+yk=numeric()                                                              #select a random point                                       
+for(y in 1:(length(sigman)-1)) yk=c(yk,runif(1,sigman[y],sigman[y+1]))   
+fln=(log(vector)/vector)
+riemann.sum=ln*(10^(-i)) 
+integral.means=c(integral.means,sum(riemann.sum/(n-1)))
+actual.means=c(actual.means, mean(fln))
+}
+
+v1=runif(100,0,10)
+quantile(v1,probs=0.25,type=8)
+
+
 
 

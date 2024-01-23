@@ -27,7 +27,7 @@ mean(1:4)+mean(1:6)+mean(1:8)+mean(1:10)+mean(1:12)+mean(1:20) #beacuse they are
 
 
 
-#Exercise 1b
+#Exercise 2b
 v=1:15
 cards=v[v!=14]
 cards
@@ -36,14 +36,14 @@ card.densities
 sum(card.densities)
 sum(cards*card.densities)
 
-
+23/01/24
 #Exercise 3
 
 n=10
 integral.means=numeric()  #to create an empty vector that will contain numerical variables
 actual.means=numeric()
 for(i in 1:5){
-sigman=seq(from=1, to=n, by=10^(-i))                                      # create a decompositio composed of smaller steps
+sigman=seq(from=1, to=n, by=10^(-i))                                      # create a decomposition composed of smaller steps
 yk=numeric()                                                              #select a random point                                       
 for(y in 1:(length(sigman)-1)) yk=c(yk,runif(1,sigman[y],sigman[y+1]))   
 fln=(log(vector)/vector)
@@ -82,5 +82,53 @@ mu=0
 sigma=1
 xs=seq(from=-4,to=4,by=0.1)
 ys=1/(sigma*sqrt(2*pi))*exp(-((xs-mu)^2)/(2*sigma^2))
-plot(xs,ys,type="1",xlab="",ylab="",main=paste("Normal distribution(mean=",mu,",sd=",sigma,")",sep=""))
-plot( xs, ys, type="1", xlab=" ", ylab=" ", main=paste("Normal distribution("mean=",mu,",sd=",sigma,")",sep=""))
+plot(xs,ys,type="1",xlab="",ylab="",main=paste("Normal distribution(mean=",mu,",sd=",sigma,")",sep=""))           #?????
+plot( xs, ys, type="1", xlab=" ", ylab=" ", main=paste("Normal distribution("mean=",mu,",sd=",sigma,")",sep=""))  #?????
+#______
+
+getwd()
+#import data
+setwd("/Users/ilari/Desktop/")
+data=read.table("alkfos.txt", header=T)
+
+#fromR to your PC
+write.table(data,file="pippo.txt")
+
+#save a copy of the whole workspace
+save.image(file="my.workspace.RData")
+
+#to save the history
+savehistory("ppp.txt")  #???
+
+load("my.workspace.RData")
+
+#PCA______________________________
+
+install.packages("ade4")
+library(ade4)
+dudi.pca(df, row.w = rep(1, nrow(df))/nrow(df), 
+    col.w = rep(1, ncol(df)), center = TRUE, scale = TRUE, 
+    scannf = TRUE, nf = 2)  #center and scale is used to specify if you want to normalize the data making all the variables numerically homogeneous
+
+
+
+data=read.csv("usair.csv")
+pca1=dudi.pca(data[,-1], center = TRUE, scale = TRUE)
+pca1$eig
+perc.eig=100*pca1$eig/sum(pca1$eig) #percentege of variance between each operation
+perc.eig
+cumsum()
+
+pca1$li
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2")
+
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2",type="n")    #without dots
+text(pca1$li[,1], pca1$li[,2], labels=rownames(data),cex=0.6)   # add name to an existing(empty) plot, cex regulates the dimension of text
+
+s.label(pca1$li,xax=1,yax=2, label=abbreviate(row.names(data)))  #plots directly with labels
+
+add.scatter.eig(pca1$eig,nf=4, xax=1,yax=2,pos="bottomleft")       
+#nf= number of PC that i have to retain #add.scatter.eig adds to our plot a barplot with the variance is expalined by each of our PC
+
+
+s.corcircle(pca1$c1,xax=1,yax=2)  #correlation circle betweem pc and original values #the longest the arrow the stronger the correlation,the direction indicates if the corr is positive or negative withpc1 and pc2(look at the axis)

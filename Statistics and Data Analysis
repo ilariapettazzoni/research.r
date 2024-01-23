@@ -51,10 +51,36 @@ riemann.sum=ln*(10^(-i))
 integral.means=c(integral.means,sum(riemann.sum/(n-1)))
 actual.means=c(actual.means, mean(fln))
 }
+#_____________________
 
 v1=runif(100,0,10)
 quantile(v1,probs=0.25,type=8)
+#_____________________
 
+v1=runif(10,1,10)
+m=mean(v1)
+v=sum((v1-m)^2/10)
+v
+var(v1)
+#_____________________
+install.packages("ggplot2movies")
+library(ggplot2movies)
+?movies
+dim(movies)
+colnames(movies)
+movies[sample(c(1:dim(movies)[1]),size =20),1:2]
 
+movies.subsample= movies[movies$votes>9999,]
+movies.subsample= movies[movies$Documentary==0,]
+movies.subsample= movies[movies$Short==0,]
 
+hist(movies.subsample$rating,col="lightblue",breaks=7,freq=FALSE) #freq change the y axis
+mean(movies.subsample$rating)
+sd(movies.subsample$rating)
 
+mu=0
+sigma=1
+xs=seq(from=-4,to=4,by=0.1)
+ys=1/(sigma*sqrt(2*pi))*exp(-((xs-mu)^2)/(2*sigma^2))
+plot(xs,ys,type="1",xlab="",ylab="",main=paste("Normal distribution(mean=",mu,",sd=",sigma,")",sep=""))
+plot( xs, ys, type="1", xlab=" ", ylab=" ", main=paste("Normal distribution("mean=",mu,",sd=",sigma,")",sep=""))

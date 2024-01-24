@@ -221,3 +221,47 @@ hist(budgets,freq=FALSE,col="yellow",breaks=30)
 budget.mean=mean(budgets,na.rm=TRUE)
 budget.mean
 actionbud=movies.subsample$budget...
+
+
+#__________________________________
+mydf=data.frame(x1=c(4,5,6,NA),x2=c(8,9,NA,11),x3=c(12,NA,14,15))
+mydf
+
+
+Replace NA values with 0 using is.na()
+mydf[is.na(mydf)]=0
+replace NA with the mean
+mydf$x1[is.na(mydf$x1)]=mean(mydf$x1,na.rm=TRUE)
+mydf$x2[is.na(mydf$x2)]=mean(mydf$x2,na.rm=TRUE)
+mydf$x3[is.na(mydf$x3)]=mean(mydf$x3,na.rm=TRUE)
+
+#CLUSTER ANALYSIS
+Exercise
+data(iris)
+iris.scaled=scale(iris[,-5],center=T,scale=T) #exluding the fifth column
+iris.dist=dist(iris.scaled)
+class(iris.dist)
+
+?hclust
+iris.hc=hclust(iris.dist, method="complete")
+plot(iris.hc,labels=iris[,5],cex=0.6)
+#oppure
+plot(iris.hc,labels=iris$Species,cex=0.6)
+iris.hc3=cutree(iris.hc,k=3)   #cut the tree in the desired n° of groups (k) and outputs the membership of each observation to which cluster
+iris.hc3
+rect.hclust(iris.hc,k=3,border = 1:3) #border is the color #visualized the groups onto the tree plot with different colors (specified in the borders argument)
+table(iris$Species,iris.hc3) #count and compares the 2 arguments
+
+iris.ha=hclust(iris.dist,method="average")
+plot(iris.ha,labels=iris[,5],cex=0.6) 
+rect.hclust(iris.ha,k=3,border = 2:4) 
+iris.ha3=cutree(iris.ha,k=3)
+table(iris$Species,iris.ha3)
+#note ‘method’ argument is used for specifying non- default methods
+
+iris.hw=hclust(iris.dist,method="ward.D") 
+plot(iris.hw,labels=iris[,5],cex=0.6)
+rect.hclust(iris.hw,k=3,border = 2:4)
+iris.hw3=cutree(iris.hw,k=3)
+table(iris$Species,iris.hw3)
+

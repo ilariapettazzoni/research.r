@@ -132,3 +132,92 @@ add.scatter.eig(pca1$eig,nf=4, xax=1,yax=2,pos="bottomleft")
 
 
 s.corcircle(pca1$c1,xax=1,yax=2)  #correlation circle betweem pc and original values #the longest the arrow the stronger the correlation,the direction indicates if the corr is positive or negative withpc1 and pc2(look at the axis)
+
+#_______ 
+24/01/24
+
+
+library(ggplot2movies)
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+ratings <- movies.subsample$rating
+shapiro.test(ratings)
+
+
+par(mfrow=c(2,1))
+hist(ratings,breaks=30,col="darkmagenta",freq=FALSE,main="Ratings")
+hist(movies.subsample$budget,breaks=30,col="darkmagenta",freq=FALSE,main="Budget")
+shapiro.test(movies.subsample$budget)
+#in both cases the distribution is not normal
+
+#Exercise 4
+head(movies.subsample)
+hist(movies.subsample$length,col="lightblue",breaks=30,freq=FALSE) 
+shapiro.test(movies.subsample$length)
+
+hist(movies.subsample$votes,col="lightblue",breaks=30,freq=FALSE) 
+shapiro.test(movies.subsample$votes)
+#in both cases the distribution is not normal
+
+1-pnorm(1)
+#[1] 0.1586553
+2*(1-pnorm(1))
+#[1] 0.3173105
+2*(1-pnorm(2))
+#[1] 0.04550026
+2*(1-pnorm(3))
+#[1] 0.002699796
+
+#Exercise 5
+
+v1=rnorm(1000, mean=10, sd=2)
+shapiro.test(v1)
+#Shapiro-Wilk normality test
+#data:  v1
+#W = 0.99859, p-value = 0.6112
+min(v1)
+max(v1)
+pnorm(6, mean=10,sd=2)*2
+(1-pnorm(14, mean=10,sd=2))*2
+___
+#Exercise 6
+pop=rnorm(10000, mean=10, sd=2)
+size=100
+means=numeric()
+for(k in 1:5000) {
+current.sample=sample(pop,size)
+means=c(means,mean(current.sample))
+}
+length(means)
+hist(means,col=sample(c(0:657),size=30),breaks=30)
+mean(means)
+#sample means distribute normally around the sample means)
+
+var(means)
+sqrt(var(means))
+-
+shapiro.test(means)
+#Shapiro-Wilk normality test
+#data:  means
+#W = 0.99978, p-value = 0.915
+#_____
+variance <- function(sample) { SS.result <- 0
+for (SS.counter in 1:length(sample)) {
+SS.result <- SS.result+(sample[SS.counter]-mean(sample))^2 }
+variance.result <- SS.result/length(sample) return(variance.result)
+}
+
+my.pop <- rnorm(10000,mean=mu,sd=sigma) sample.size <- 100
+sample.vars <- numeric()
+for (k in 1:5000) {
+current.sample <- sample(my.pop,sample.size) sample.vars <- c(sample.vars,variance(current.sample)) }
+mean(sample.vars)/variance(my.pop)  
+#the variance of the samples is smaller and depends on teh dimention of the sample, 
+#generally the variance of the sample is the variance of the pop*((N-1)N)
+
+
+___-
+budgets=movies.subsample$budget
+hist(budgets,freq=FALSE,col="yellow",breaks=30)
+budget.mean=mean(budgets,na.rm=TRUE)
+budget.mean
+actionbud=movies.subsample$budget...

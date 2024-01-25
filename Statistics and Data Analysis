@@ -335,3 +335,23 @@ rect.hclust(wclust,k=3,border = 2:4)
 wclust3=cutree(wclust,k=3)
 table(w[,1],wclust3)
 
+
+25/01/24
+data(iris)
+iris.km=kmeans(scale(iris[,-5]),centers=3, iter.max = 10, nstart=10)
+iris.km
+
+iris.km$cluster  #vector containing the cliuster number assigned
+iris.km$centers #matrix of cluster means (centroids)
+iris.km$size #number of points assigned to each cluster
+iris.km$tot.withinss #measure of the total variation that you can obsere within each cluster, should be low
+
+table(iris$Species,iris.km$cluster)
+
+install.packages("factoextra") 
+library(factoextra)
+fviz_cluster(iris.km,iris[,-5],axes=c(1,2))
+rownames(iris)=paste(c(1:150),iris$Species,sep="_")
+head(iris)
+fviz_cluster(iris.km,iris[,-5],axes=c(1,2))
+table(iris$Species,iris.km$cluster)

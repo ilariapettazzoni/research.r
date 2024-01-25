@@ -394,3 +394,125 @@ tot.var=vector("numeric",10)
 for (i in 1:10) {
 tot.var[i]=kmeans(ws,centers=i,nstart=10)$tot.withinss }
 plot(1:10,tot.var,type="b",xlab="n centers",ylab="total variance")
+___
+
+sample1=rnorm(20,mean=5,sd=0.5)
+sample2=rnorm(25,mean=7,sd=1)
+sample1
+sample2
+t.test(sample1,sample2,paired=FALSE)
+
+
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+dim(movies.subsample)
+budgets=movies.subsample$budget
+ratings=movies.subsample$rating
+shapiro.test(budgets)
+action.movie.budgets=budgets[movies.subsample$Action]
+
+wilcox.test(action.movie.budgets,mu=mean(budgets,na.rm=TRUE))
+drama.movie.budgets=budgets[movies.subsample$Drama]
+length(drama.movie.budgets)
+
+wilcox.test(action.movie.budgets,drama.movie.budgets,paired=FALSE, alternative=("two.sided") )
+boxplot(action.movie.budgets,drama.movie.budgets)   #??
+
+#Exercisex
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+ratings=movies.subsample$rating
+shapiro.test(ratings) #non normal
+action.movie.ratings=ratings[movies.subsample$Action == 1 & movies.subsample$Romance == 0]
+romance.movie.ratings=ratings[movies.subsample$Romance == 1 & movies.subsample$Action == 0]
+
+wilcox.test(action.movie.ratings,mu=mean(ratings,na.rm=TRUE))#?alternative?
+wilcox.test(romance.movie.ratings,mu=mean(ratings,na.rm=TRUE))#?alternative?
+
+wilcox.test(action.movie.ratings,romance.movie.ratings,paired=FALSE, alternative="two.sided")
+
+
+#Soluzione1
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+ratings=movies.subsample$rating
+shapiro.test(ratings) #non normal
+action.movie.ratings=ratings[movies.subsample$Action == 1] 
+romance.movie.ratings=ratings[movies.subsample$Romance == 1] 
+animation.movie.ratings=ratings[movies.subsample$Animation == 1] 
+drama.movie.ratings=ratings[movies.subsample$Drama == 1] 
+wilcox.test(action.movie.ratings,romance.movie.ratings,paired=FALSE, alternative="greater")
+#Wilcoxon rank sum test with continuity correction
+
+#data:  action.movie.ratings and romance.movie.ratings
+#W = 15584, p-value = 0.9993
+#alternative hypothesis: true location shift is greater than 0 
+#we cannot reject the null hypothesis
+boxplot(action.movie.ratings,romance.movie.ratings)
+
+wilcox.test(drama.movie.ratings,animation.movie.ratings,paired=FALSE, alternative="two.sided")
+#Wilcoxon rank sum test with continuity correction
+
+#data:  drama.movie.ratings and animation.movie.ratings
+#W = 5692, p-value = 0.2272
+#alternative hypothesis: true location shift is not equal to 0
+#no significat differences
+boxplot(drama.movie.ratings,animation.movie.ratings)
+
+
+plot(budgets,raiting)
+cor(budgets,ratings,use="complete.obs")
+cor(budgets,ratings,use="complete.obs")^2
+
+#r significance
+install.packages("Hmisc")
+library(Hmisc)
+rcorr(budgets,ratings)
+
+rcorr(budgets,ratings)$r
+rcorr(budgets,ratings)$P
+rcorr(budgets,ratings)$r[1,2]
+cor(budgets,ratings,use="complete.obs")
+  
+#__
+#linear regression
+vector.x <- c(0,1,2,3,4,5)
+vector.y <- c(2.9,5,6.9,9.1,11.1,13) 
+linear.model <- lm(vector.y~vector.x) #~ significa y on x
+summary(linear.model)
+
+#Call:
+#lm(formula = vector.y ~ vector.x)
+
+#Residuals:
+#       1        2        3        4        5        6 
+#-0.02857  0.04286 -0.08571  0.08571  0.05714 -0.07143 
+
+#Coefficients:
+#            Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)  2.92857    0.05803   50.47 9.23e-07 ***
+#vector.x     2.02857    0.01917  105.84 4.78e-08 ***     #vector.x =slope( is called as the independent value #check p value of the slope which is also the significance
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 0.08018 on 4 degrees of freedom
+#Multiple R-squared:  0.9996,	Adjusted R-squared:  0.9996 
+#F-statistic: 1.12e+04 on 1 and 4 DF,  p-value: 4.778e-08
+
+rcorr(vector.x,vector.y)$r[1,2] #strong correlation
+plot(vector.x,vector.y)
+str(rcorr(vector.x,vector.y))
+str(linear.model)
+linear.model$coefficients[1]#ectract the coefficents(q, m)
+linear.model$coefficients[2]
+
+plot(vector.x,vector.y)
+abline(a=linear.model$coefficients[1],b=linear.model$coefficients[2])  #works only with an active plot
+plot(vector.x,vector.y)
+abline(a=linear.model$coefficients[1],b=linear.model$coefficients[2],lty=2)
+_
+budget=movies.subsample$budget
+ratings=movies.subsample$rating
+linear.model1 <- lm(ratings~budget) 
+summary(linear.model1)
+
+plot(budget,ratings,pch=15,col="lavender")
+abline(a=linear.model1$coefficients[1],b=linear.model1$coefficients[2])
+

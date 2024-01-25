@@ -355,3 +355,42 @@ rownames(iris)=paste(c(1:150),iris$Species,sep="_")
 head(iris)
 fviz_cluster(iris.km,iris[,-5],axes=c(1,2))
 table(iris$Species,iris.km$cluster)
+
+dev.copy2pdf(file="plot.pdf")
+
+kmeans(scale(iris[,-5]),centers=1, iter.max=10, nstart=10)$tot.withinss 
+kmeans(scale(iris[,-5]),centers=2, iter.max=10, nstart=10)$tot.withinss 
+kmeans(scale(iris[,-5]),centers=3, iter.max=10, nstart=10)$tot.withinss
+kmeans(scale(iris[,-5]),centers=4, iter.max=10, nstart=10)$tot.withinss
+
+tot.var=vector("numeric",10) #generate an ‘empty’ vector to fill later 
+#Then, we create a loop cycle by iteratively applying ‘kmeans’ function 10 times, and at
+each run of the cycle, the result will be ‘recorded’ in the ‘i’th position of tot.var vector 
+for (i in 1:10) {
+tot.var[i]=kmeans(scale(iris[,-5]),centers=i,nstart=10)$tot.withinss }
+plot(1:10,tot.var,type="b",xlab=“n centers",ylab="total variance")
+# Return a scatterplot where ‘type="b"’ argument introduces a broken line connecting points
+
+#KMEANS WINE
+w=read.table("wine.txt",header=T)
+ws=scale(w[3:31])
+w.km=kmeans(ws,centers=3, iter.max = 10, nstart=10)
+w.km=kmeans(ws,centers=4, iter.max = 10, nstart=10)
+w.km
+w.km$cluster  
+w.km$centers 
+w.km$size 
+w.km$tot.withinss
+table(w$Label,w.km$cluster)
+table(w$Soil,w.km$cluster)
+fviz_cluster(w.km,ws,axes=c(1,2))
+dim(w)
+rownames(w)=paste(c(1:21),w$Label,sep="_")
+head(w)
+fviz_cluster(w.km,w[3:31],axes=c(1,2))
+
+tot.var=vector("numeric",10) 
+
+for (i in 1:10) {
+tot.var[i]=kmeans(ws,centers=i,nstart=10)$tot.withinss }
+plot(1:10,tot.var,type="b",xlab="n centers",ylab="total variance")

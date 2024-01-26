@@ -516,3 +516,6 @@ summary(linear.model1)
 plot(budget,ratings,pch=15,col="lavender")
 abline(a=linear.model1$coefficients[1],b=linear.model1$coefficients[2])
 
+
+
+

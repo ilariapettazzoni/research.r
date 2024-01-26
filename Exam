@@ -1,2 +1,173 @@
-#_____EXAM CODE
+#_____EXAM CODE__Ilaria Pettazzoni
+
+#Ex3.1_____
+setwd("/Users/ilari/Desktop/")
+cow=read.csv("pesi.csv",header=T)
+cow
+
+
+#means
+mean.vif=mean(cow$vif)
+mean.car=mean(cow$carcasse)
+mean.v1=mean(cow$viande1)
+mean.vtot=mean(cow$viandetot)
+mean.gras=mean(cow$gras)
+mean.os=mean(cow$os)
+means=c(mean.vif,mean.car,mean.v1,mean.vtot,mean.gras,mean.os)
+means
+
+
+#variance
+var.vif=var(cow$vif)
+var.car=var(cow$carcasse)
+var.v1=var(cow$viande1)
+var.vtot=var(cow$viandetot)
+var.gras=var(cow$gras)
+var.os=var(cow$os)
+vars=c(var.vif,var.car,var.v1,var.vtot,var.gras,var.os)
+vars
+
+#sd
+
+sd.vif=sd(cow$vif)
+sd.car=sd(cow$carcasse)
+sd.v1=sd(cow$viande1)
+sd.vtot=sd(cow$viandetot)
+sd.gras=sd(cow$gras)
+sd.os=sd(cow$os)
+sds=c(sd.vif,sd.car,sd.v1,sd.vtot,sd.gras,sd.os)
+sds
+
+#data frame
+df.cow=data.frame(means,vars,sds)
+df.cow
+
+#Ex3.2_____
+vif=cow$vif
+hist(cow$vif,col="lightblue",breaks=10,freq=FALSE) 
+shapiro.test(cow$vif)
+
+#W = 0.93675, p-value = 0.153 #the data is normally distributed
+vtot=cow$viandetot
+shapiro.test(vtot)
+
+#W = 0.96429, p-value = 0.5551  #the data is normally distributed
+gras=cow$gras
+shapiro.test(gras)
+#W = 0.97467, p-value = 0.7987 #the data is normally distributed
+
+#distribution
+mu=0
+
+x.cow=seq(-10,10,0.01)
+y.cow=1/(sd.vif*sqrt(2*pi))*exp(-((x.cow-mu)^2)/(2*sd.vif^2))
+plot( x.cow, y.cow, type="l", xlab=" ", ylab=" ", main=paste("Weight-Normal distribution(mean=",mu,", sd=",sd.vif,")",sep=""),xlim=c(-10,10),ylim=c(0,0.06))
+dev.copy2pdf(file="Ex3.2.pdf")
+
+#Ex3.3____________
+
+cow.fiv=c(cow[,1])
+cow.vtot=c(cow[,4])
+cow.fiv
+cow.vtot
+plot(cow.fiv,cow.vtot)
+cor(cow.fiv,cow.vtot,use="complete.obs")
+cor(cow.fiv,cow.vtot,use="complete.obs")^2
+
+library(Hmisc)
+rcorr(cow.fiv,cow.vtot)
+
+#Not correlated
+#      x     y
+#x  1.00 -0.13
+#y -0.13  1.00
+
+#n= 23 
+
+#P
+#  x      y     
+#x        0.5622
+#y 0.5622       
+
+linear.model <- lm(cow.vtot~cow.fiv) 
+summary(linear.model)
+
+Ex3.4___
+
+cha=cow$vif[1:12]
+zeb=cow$vif[13:23]
+t.test(cha,zeb,paired=FALSE,alternative=("greater")) 
+#Charolaise variety wheight more than Zebu
+#t = 0.88736, df = 15.152, p-value = 0.1944
+
+Ex3.5_______
+
+library(ade4)
+dudi.pca(df = cow[, -7], center = TRUE, scale = TRUE, scannf = FALSE, nf = 3)
+pca1$eig
+perc.eig=100*pca1$eig/sum(pca1$eig)
+perc.eig
+cumsum(perc.eig)
+
+s.label(pca1$li,xax=1,yax=2, label=abbreviate(row.names(cow))) 
+add.scatter.eig(pca1$eig,nf=4, xax=1,yax=2,pos="bottomleft")       
+dev.copy2pdf(file="Ex3.5a.pdf")
+
+s.corcircle(pca1$c1,xax=1,yax=2) 
+dev.copy2pdf(file="Ex3.5b.pdf")
+
+#Ex3.6____
+
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2",type="n")
+text(pca1$li[,1], pca1$li[,2], labels=cow$class,cex=0.8)  
+dev.copy2pdf(file="Ex3.6.pdf")
+#yes there are noticable groupings
+
+Ex3.7__
+s.corcircle(pca1$c1,xax=1,yax=2) 
+dev.copy2pdf(file="Ex3.7.pdf")
+#vif and carcass mostly influence the structure,indicated by the length of the arrow 
+
+#Ex3.8_____
+cow.scaled=scale(iris[,1:6],center=T,scale=T) 
+cow.dist=dist(cow.scaled)
+class(cow.dist)
+
+cow.hc=hclust(cow.dist, method="complete")
+plot(cow.hc,labels=cow$class,cex=0.6)
+cow.hc2=cutree(cow.hc,k=2)  
+cow.hc2
+rect.hclust(cow.hc,k=2,border = 1:3) 
+table(cow$class,cow.hc2) 
+dev.copy2pdf(file="Ex3.8a.pdf")
+
+cow.hc=hclust(cow.dist, method="average")
+plot(cow.hc,labels=cow$class,cex=0.6)
+cow.hc2=cutree(cow.hc,k=2)  
+cow.hc2
+rect.hclust(cow.hc,k=2,border = 1:3) 
+table(cow$class,cow.hc2) 
+dev.copy2pdf(file="Ex3.8a.pdf")
+#whith the method "averege" the observed clusters correspond to the class  groups
+
+
+cow.km=kmeans(scale(cow[,-7]),centers=3, iter.max = 10, nstart=10)
+cow.km
+
+library(factoextra)
+fviz_cluster(cow.km,iris[,-7],axes=c(1,2)) 
+dev.copy2pdf(file="Ex3.8b.pdf")
+
+kmeans(scale(cow[,-7]),centers=1, iter.max=10, nstart=10)$tot.withinss 
+kmeans(scale(cow[,-7]),centers=2, iter.max=10, nstart=10)$tot.withinss 
+kmeans(scale(cow[,-7]),centers=3, iter.max=10, nstart=10)$tot.withinss
+kmeans(scale(cow[,-7]),centers=4, iter.max=10, nstart=10)$tot.withinss
+
+tot=vector("numeric",10)
+for (i in 1:10) {
+tot[i]=kmeans(scale(cow[,-7]),centers=i,nstart=10)$tot.withinss }
+plot(1:10,tot,type="b",xlab="n centers",ylab="total variance")
+dev.copy2pdf(file="Ex3.8c.pdf")
+
+
 

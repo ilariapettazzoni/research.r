@@ -1,3 +1,5 @@
+
+
 22/01/24
 Statistics and Data Analysis
 
@@ -27,7 +29,7 @@ mean(1:4)+mean(1:6)+mean(1:8)+mean(1:10)+mean(1:12)+mean(1:20) #beacuse they are
 
 
 
-#Exercise 1b
+#Exercise 2b
 v=1:15
 cards=v[v!=14]
 cards
@@ -36,12 +38,525 @@ card.densities
 sum(card.densities)
 sum(cards*card.densities)
 
-
+23/01/24
 #Exercise 3
-vector=seq(from=1, to=100, by=0.1)
-for(i in 1:991){
-ln=(log(vector)/vector)}
-plot(ln)
-mean(ln)
+
+n=10
+integral.means=numeric()  #to create an empty vector that will contain numerical variables
+actual.means=numeric()
+for(i in 1:5){
+sigman=seq(from=1, to=n, by=10^(-i))                                      # create a decomposition composed of smaller steps
+yk=numeric()                                                              #select a random point                                       
+for(y in 1:(length(sigman)-1)) yk=c(yk,runif(1,sigman[y],sigman[y+1]))   
+fln=(log(vector)/vector)
+riemann.sum=ln*(10^(-i)) 
+integral.means=c(integral.means,sum(riemann.sum/(n-1)))
+actual.means=c(actual.means, mean(fln))
+}
+#_____________________
+
+v1=runif(100,0,10)
+quantile(v1,probs=0.25,type=8)
+#_____________________
+
+v1=runif(10,1,10)
+m=mean(v1)
+v=sum((v1-m)^2/10)
+v
+var(v1)
+#_____________________
+install.packages("ggplot2movies")
+library(ggplot2movies)
+?movies
+dim(movies)
+colnames(movies)
+movies[sample(c(1:dim(movies)[1]),size =20),1:2]
+
+movies.subsample= movies[movies$votes>9999,]
+movies.subsample= movies[movies$Documentary==0,]
+movies.subsample= movies[movies$Short==0,]
+
+hist(movies.subsample$rating,col="lightblue",breaks=7,freq=FALSE) #freq change the y axis
+mean(movies.subsample$rating)
+sd(movies.subsample$rating)
+
+mu=0
+sigma=1
+xs=seq(from=-4,to=4,by=0.1)
+ys=1/(sigma*sqrt(2*pi))*exp(-((xs-mu)^2)/(2*sigma^2))
+plot(xs,ys,type="1",xlab="",ylab="",main=paste("Normal distribution(mean=",mu,",sd=",sigma,")",sep=""))           #?????
+plot( xs, ys, type="1", xlab=" ", ylab=" ", main=paste("Normal distribution("mean=",mu,",sd=",sigma,")",sep=""))  #?????
+#______
+
+getwd()
+#import data
+setwd("/Users/ilari/Desktop/")
+data=read.table("alkfos.txt", header=T)
+
+#fromR to your PC
+write.table(data,file="pippo.txt")
+
+#save a copy of the whole workspace
+save.image(file="my.workspace.RData")
+
+#to save the history
+savehistory("ppp.txt")  #???
+
+load("my.workspace.RData")
+
+#PCA______________________________
+
+install.packages("ade4")
+library(ade4)
+dudi.pca(df, row.w = rep(1, nrow(df))/nrow(df), 
+    col.w = rep(1, ncol(df)), center = TRUE, scale = TRUE, 
+    scannf = TRUE, nf = 2)  #center and scale is used to specify if you want to normalize the data making all the variables numerically homogeneous
 
 
+
+data=read.csv("usair.csv")
+pca1=dudi.pca(data[,-1], center = TRUE, scale = TRUE)
+pca1$eig
+perc.eig=100*pca1$eig/sum(pca1$eig) #percentege of variance between each operation
+perc.eig
+cumsum()
+
+pca1$li
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2")
+
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2",type="n")    #without dots
+text(pca1$li[,1], pca1$li[,2], labels=rownames(data),cex=0.6)   # add name to an existing(empty) plot, cex regulates the dimension of text
+
+s.label(pca1$li,xax=1,yax=2, label=abbreviate(row.names(data)))  #plots directly with labels
+
+add.scatter.eig(pca1$eig,nf=4, xax=1,yax=2,pos="bottomleft")       
+#nf= number of PC that i have to retain #add.scatter.eig adds to our plot a barplot with the variance is expalined by each of our PC
+
+
+s.corcircle(pca1$c1,xax=1,yax=2)  #correlation circle betweem pc and original values #the longest the arrow the stronger the correlation,the direction indicates if the corr is positive or negative withpc1 and pc2(look at the axis)
+
+#_______ 
+24/01/24
+
+
+library(ggplot2movies)
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+ratings <- movies.subsample$rating
+shapiro.test(ratings)
+
+
+par(mfrow=c(2,1))
+hist(ratings,breaks=30,col="darkmagenta",freq=FALSE,main="Ratings")
+hist(movies.subsample$budget,breaks=30,col="darkmagenta",freq=FALSE,main="Budget")
+shapiro.test(movies.subsample$budget)
+#in both cases the distribution is not normal
+
+#Exercise 4
+head(movies.subsample)
+hist(movies.subsample$length,col="lightblue",breaks=30,freq=FALSE) 
+shapiro.test(movies.subsample$length)
+
+hist(movies.subsample$votes,col="lightblue",breaks=30,freq=FALSE) 
+shapiro.test(movies.subsample$votes)
+#in both cases the distribution is not normal
+
+1-pnorm(1)
+#[1] 0.1586553
+2*(1-pnorm(1))
+#[1] 0.3173105
+2*(1-pnorm(2))
+#[1] 0.04550026
+2*(1-pnorm(3))
+#[1] 0.002699796
+
+#Exercise 5
+
+v1=rnorm(1000, mean=10, sd=2)
+shapiro.test(v1)
+#Shapiro-Wilk normality test
+#data:  v1
+#W = 0.99859, p-value = 0.6112
+min(v1)
+max(v1)
+pnorm(6, mean=10,sd=2)*2
+(1-pnorm(14, mean=10,sd=2))*2
+___
+#Exercise 6
+pop=rnorm(10000, mean=10, sd=2)
+size=100
+means=numeric()
+for(k in 1:5000) {
+current.sample=sample(pop,size)
+means=c(means,mean(current.sample))
+}
+length(means)
+hist(means,col=sample(c(0:657),size=30),breaks=30)
+mean(means)
+#sample means distribute normally around the sample means)
+
+var(means)
+sqrt(var(means))
+-
+shapiro.test(means)
+#Shapiro-Wilk normality test
+#data:  means
+#W = 0.99978, p-value = 0.915
+#_____
+variance <- function(sample) { SS.result <- 0
+for (SS.counter in 1:length(sample)) {
+SS.result <- SS.result+(sample[SS.counter]-mean(sample))^2 }
+variance.result <- SS.result/length(sample) return(variance.result)
+}
+
+my.pop <- rnorm(10000,mean=mu,sd=sigma) sample.size <- 100
+sample.vars <- numeric()
+for (k in 1:5000) {
+current.sample <- sample(my.pop,sample.size) sample.vars <- c(sample.vars,variance(current.sample)) }
+mean(sample.vars)/variance(my.pop)  
+#the variance of the samples is smaller and depends on teh dimention of the sample, 
+#generally the variance of the sample is the variance of the pop*((N-1)N)
+
+
+___-
+budgets=movies.subsample$budget
+hist(budgets,freq=FALSE,col="yellow",breaks=30)
+budget.mean=mean(budgets,na.rm=TRUE)
+budget.mean
+actionbud=movies.subsample$budget...
+
+
+#__________________________________
+mydf=data.frame(x1=c(4,5,6,NA),x2=c(8,9,NA,11),x3=c(12,NA,14,15))
+mydf
+
+
+Replace NA values with 0 using is.na()
+mydf[is.na(mydf)]=0
+replace NA with the mean
+mydf$x1[is.na(mydf$x1)]=mean(mydf$x1,na.rm=TRUE)
+mydf$x2[is.na(mydf$x2)]=mean(mydf$x2,na.rm=TRUE)
+mydf$x3[is.na(mydf$x3)]=mean(mydf$x3,na.rm=TRUE)
+
+#CLUSTER ANALYSIS
+Exercise
+data(iris)
+iris.scaled=scale(iris[,-5],center=T,scale=T) #exluding the fifth column
+iris.dist=dist(iris.scaled)
+class(iris.dist)
+
+?hclust
+iris.hc=hclust(iris.dist, method="complete")
+plot(iris.hc,labels=iris[,5],cex=0.6)
+#oppure
+plot(iris.hc,labels=iris$Species,cex=0.6)
+iris.hc3=cutree(iris.hc,k=3)   #cut the tree in the desired n° of groups (k) and outputs the membership of each observation to which cluster
+iris.hc3
+rect.hclust(iris.hc,k=3,border = 1:3) #border is the color #visualized the groups onto the tree plot with different colors (specified in the borders argument)
+table(iris$Species,iris.hc3) #count and compares the 2 arguments
+
+iris.ha=hclust(iris.dist,method="average")
+plot(iris.ha,labels=iris[,5],cex=0.6) 
+rect.hclust(iris.ha,k=3,border = 2:4) 
+iris.ha3=cutree(iris.ha,k=3)
+table(iris$Species,iris.ha3)
+#note ‘method’ argument is used for specifying non- default methods
+
+iris.hw=hclust(iris.dist,method="ward.D") 
+plot(iris.hw,labels=iris[,5],cex=0.6)
+rect.hclust(iris.hw,k=3,border = 2:4)
+iris.hw3=cutree(iris.hw,k=3)
+
+
+table(iris$Species,iris.hw3)
+
+#PCA iris Dataset______________________
+
+library(ade4)
+data(iris)
+pca1=dudi.pca(iris[,-5], center = TRUE, scale = TRUE)
+pca1$eig
+perc.eig=100*pca1$eig/sum(pca1$eig) #percentege of variance between each operation
+perc.eig
+cumsum()
+
+pca1$li
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2")
+
+plot(pca1$li[,1],pca1$li[,2], xlab="PC1",ylab="PC2",type="n")    #without dots
+text(pca1$li[,1], pca1$li[,2], labels=rownames(data),cex=0.6)   # add name to an existing(empty) plot, cex regulates the dimension of text
+
+s.label(pca1$li,xax=1,yax=2, label=abbreviate(iris$Species))  #plots directly with labels
+
+add.scatter.eig(pca1$eig,nf=4, xax=1,yax=2,pos="bottomleft")       
+#nf= number of PC that i have to retain #add.scatter.eig adds to our plot a barplot with the variance is expalined by each of our PC
+
+
+s.corcircle(pca1$c1,xax=1,yax=2)  #correlation circle betweem pc and original values #the longest the arrow the stronger the correlation,the direction indicates if the corr is positive or negative withpc1 and pc2(look at the axis)
+
+#WINE___________
+setwd("/Users/ilari/Desktop/")
+w=read.table("wine.txt",header=T)
+ws=scale(w[,3:31],center=T,scale=T)
+ws
+
+w.dist=dist(ws)
+class(w.dist)
+wclust=hclust(w.dist,method="complete")
+plot(wclust,labels=w[,2],cex=0.6) 
+rect.hclust(wclust,k=4,border = 2:4) 
+wclust4=cutree(wclust,k=4)
+table(w[,2],wclust4)
+
+wclust=hclust(w.dist,method="avarage")
+plot(wclust,labels=w[,2],cex=0.6) 
+rect.hclust(wclust,k=4,border = 2:4) 
+wclust4=cutree(wclust,k=4)
+table(w[,2],wclust4)
+
+wclust=hclust(w.dist,method="ward.D")
+plot(wclust,labels=w[,2],cex=0.6) 
+rect.hclust(wclust,k=4,border = 2:4) 
+wclust4=cutree(wclust,k=4)
+table(w[,2],wclust4)
+
+wclust=hclust(w.dist,method="complete")
+plot(wclust,labels=w[,1],cex=0.6) 
+rect.hclust(wclust,k=3,border = 2:4) 
+wclust3=cutree(wclust,k=3)
+table(w[,1],wclust3)
+
+wclust=hclust(w.dist,method="avarage")
+plot(wclust,labels=w[,1],cex=0.6) 
+rect.hclust(wclust,k=3,border = 2:4) 
+wclust3=cutree(wclust,k=3)
+table(w[,1],wclust3)
+
+wclust=hclust(w.dist,method="ward.D")
+plot(wclust,labels=w[,1],cex=0.6) 
+rect.hclust(wclust,k=3,border = 2:4) 
+wclust3=cutree(wclust,k=3)
+table(w[,1],wclust3)
+
+
+25/01/24
+data(iris)
+iris.km=kmeans(scale(iris[,-5]),centers=3, iter.max = 10, nstart=10)
+iris.km
+
+iris.km$cluster  #vector containing the cliuster number assigned
+iris.km$centers #matrix of cluster means (centroids)
+iris.km$size #number of points assigned to each cluster
+iris.km$tot.withinss #measure of the total variation that you can obsere within each cluster, should be low
+
+table(iris$Species,iris.km$cluster)
+
+install.packages("factoextra") 
+library(factoextra)
+fviz_cluster(iris.km,iris[,-5],axes=c(1,2))
+rownames(iris)=paste(c(1:150),iris$Species,sep="_")
+head(iris)
+fviz_cluster(iris.km,iris[,-5],axes=c(1,2))
+table(iris$Species,iris.km$cluster)
+
+dev.copy2pdf(file="plot.pdf")
+
+kmeans(scale(iris[,-5]),centers=1, iter.max=10, nstart=10)$tot.withinss 
+kmeans(scale(iris[,-5]),centers=2, iter.max=10, nstart=10)$tot.withinss 
+kmeans(scale(iris[,-5]),centers=3, iter.max=10, nstart=10)$tot.withinss
+kmeans(scale(iris[,-5]),centers=4, iter.max=10, nstart=10)$tot.withinss
+
+tot.var=vector("numeric",10) #generate an ‘empty’ vector to fill later 
+#Then, we create a loop cycle by iteratively applying ‘kmeans’ function 10 times, and at
+each run of the cycle, the result will be ‘recorded’ in the ‘i’th position of tot.var vector 
+for (i in 1:10) {
+tot.var[i]=kmeans(scale(iris[,-5]),centers=i,nstart=10)$tot.withinss }
+plot(1:10,tot.var,type="b",xlab=“n centers",ylab="total variance")
+# Return a scatterplot where ‘type="b"’ argument introduces a broken line connecting points
+
+#KMEANS WINE
+w=read.table("wine.txt",header=T)
+ws=scale(w[3:31])
+w.km=kmeans(ws,centers=3, iter.max = 10, nstart=10)
+w.km=kmeans(ws,centers=4, iter.max = 10, nstart=10)
+w.km
+w.km$cluster  
+w.km$centers 
+w.km$size 
+w.km$tot.withinss
+table(w$Label,w.km$cluster)
+table(w$Soil,w.km$cluster)
+fviz_cluster(w.km,ws,axes=c(1,2))
+dim(w)
+rownames(w)=paste(c(1:21),w$Label,sep="_")
+head(w)
+fviz_cluster(w.km,w[3:31],axes=c(1,2))
+
+tot.var=vector("numeric",10) 
+
+for (i in 1:10) {
+tot.var[i]=kmeans(ws,centers=i,nstart=10)$tot.withinss }
+plot(1:10,tot.var,type="b",xlab="n centers",ylab="total variance")
+___
+
+sample1=rnorm(20,mean=5,sd=0.5)
+sample2=rnorm(25,mean=7,sd=1)
+sample1
+sample2
+t.test(sample1,sample2,paired=FALSE)
+
+
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+dim(movies.subsample)
+budgets=movies.subsample$budget
+ratings=movies.subsample$rating
+shapiro.test(budgets)
+action.movie.budgets=budgets[movies.subsample$Action]
+
+wilcox.test(action.movie.budgets,mu=mean(budgets,na.rm=TRUE))
+drama.movie.budgets=budgets[movies.subsample$Drama]
+length(drama.movie.budgets)
+
+wilcox.test(action.movie.budgets,drama.movie.budgets,paired=FALSE, alternative=("two.sided") )
+boxplot(action.movie.budgets,drama.movie.budgets)   #??
+
+#Exercisex
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+ratings=movies.subsample$rating
+shapiro.test(ratings) #non normal
+action.movie.ratings=ratings[movies.subsample$Action == 1 & movies.subsample$Romance == 0]
+romance.movie.ratings=ratings[movies.subsample$Romance == 1 & movies.subsample$Action == 0]
+
+wilcox.test(action.movie.ratings,mu=mean(ratings,na.rm=TRUE))#?alternative?
+wilcox.test(romance.movie.ratings,mu=mean(ratings,na.rm=TRUE))#?alternative?
+
+wilcox.test(action.movie.ratings,romance.movie.ratings,paired=FALSE, alternative="two.sided")
+
+
+#Soluzione1
+movies.subsample <- movies[movies$votes > 9999 & movies$Short == 0 & movies$Documentary == 0,]
+ratings=movies.subsample$rating
+shapiro.test(ratings) #non normal
+action.movie.ratings=ratings[movies.subsample$Action == 1] 
+romance.movie.ratings=ratings[movies.subsample$Romance == 1] 
+animation.movie.ratings=ratings[movies.subsample$Animation == 1] 
+drama.movie.ratings=ratings[movies.subsample$Drama == 1] 
+wilcox.test(action.movie.ratings,romance.movie.ratings,paired=FALSE, alternative="greater")
+#Wilcoxon rank sum test with continuity correction
+
+#data:  action.movie.ratings and romance.movie.ratings
+#W = 15584, p-value = 0.9993
+#alternative hypothesis: true location shift is greater than 0 
+#we cannot reject the null hypothesis
+boxplot(action.movie.ratings,romance.movie.ratings)
+
+wilcox.test(drama.movie.ratings,animation.movie.ratings,paired=FALSE, alternative="two.sided")
+#Wilcoxon rank sum test with continuity correction
+
+#data:  drama.movie.ratings and animation.movie.ratings
+#W = 5692, p-value = 0.2272
+#alternative hypothesis: true location shift is not equal to 0
+#no significat differences
+boxplot(drama.movie.ratings,animation.movie.ratings)
+
+
+plot(budgets,raiting)
+cor(budgets,ratings,use="complete.obs")
+cor(budgets,ratings,use="complete.obs")^2
+
+#r significance
+install.packages("Hmisc")
+library(Hmisc)
+rcorr(budgets,ratings)
+
+rcorr(budgets,ratings)$r
+rcorr(budgets,ratings)$P
+rcorr(budgets,ratings)$r[1,2]
+cor(budgets,ratings,use="complete.obs")
+  
+#__
+#linear regression
+vector.x <- c(0,1,2,3,4,5)
+vector.y <- c(2.9,5,6.9,9.1,11.1,13) 
+linear.model <- lm(vector.y~vector.x) #~ significa y on x
+summary(linear.model)
+
+#Call:
+#lm(formula = vector.y ~ vector.x)
+
+#Residuals:
+#       1        2        3        4        5        6 
+#-0.02857  0.04286 -0.08571  0.08571  0.05714 -0.07143 
+
+#Coefficients:
+#            Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)  2.92857    0.05803   50.47 9.23e-07 ***
+#vector.x     2.02857    0.01917  105.84 4.78e-08 ***     #vector.x =slope( is called as the independent value #check p value of the slope which is also the significance
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#Residual standard error: 0.08018 on 4 degrees of freedom
+#Multiple R-squared:  0.9996,	Adjusted R-squared:  0.9996 
+#F-statistic: 1.12e+04 on 1 and 4 DF,  p-value: 4.778e-08
+
+rcorr(vector.x,vector.y)$r[1,2] #strong correlation
+plot(vector.x,vector.y)
+str(rcorr(vector.x,vector.y))
+str(linear.model)
+linear.model$coefficients[1]#ectract the coefficents(q, m)
+linear.model$coefficients[2]
+
+plot(vector.x,vector.y)
+abline(a=linear.model$coefficients[1],b=linear.model$coefficients[2])  #works only with an active plot
+plot(vector.x,vector.y)
+abline(a=linear.model$coefficients[1],b=linear.model$coefficients[2],lty=2)
+_
+budget=movies.subsample$budget
+ratings=movies.subsample$rating
+linear.model1 <- lm(ratings~budget) 
+summary(linear.model1)
+
+plot(budget,ratings,pch=15,col="lavender")
+abline(a=linear.model1$coefficients[1],b=linear.model1$coefficients[2])
+#________________________________
+26/01/24
+
+
+chisq.test(c(30,253,152))
+chisq.test(c(30,253,152), p =c(0.25,0.5,0.25))
+
+
+dchisq(1,df=2)
+#[1] 0.3032653
+dchisq(80.021,df=2)
+#[1] 2.10199e-18
+pchisq(80.021,df=2) #area under the curve, will always be 1
+#[1] 1
+rchisq(80.021,df=2)
+---
+movie.matrix=matrix(c(1,29,50,203,18,134),ncol=2,byrow=T)
+chisq.test(movie.matrix)
+
+	#Pearson's Chi-squared test
+
+#data:  movie.matrix
+#X-squared = 8.2535, df = 2, p-value = 0.01614
+
+ANOVA
+dim(movies.subsample)
+colnames(movies.subsample)
+action.ratings=movies.subsample$rating[movies.subsample$Action==1]
+animation.ratings=movies.subsample$rating[movies.subsample$Animation==1]
+comedy.ratings=movies.subsample$rating[movies.subsample$Comedy==1]
+drama.ratings=movies.subsample$rating[movies.subsample$Drama==1]
+Romance.ratings=movies.subsample$rating[movies.subsample$Romance==1]
+length(action.ratings)+length(animation.ratings)
+anova.ratings=c(action.ratings,animation.ratings,comedy.ratings,drama.ratings,drama.ratings,Romance.ratings)
+anova.groups=c(rep("Action",length(action.ratings)),rep("Animation",length(animation.ratings),rep("Comedy",length(comedy.ratings)),rep("Drama",length(drama.ratings)),rep("Romance",length(Romance.ratings)))
+anova.movies=aov(anova.ratings~anova.groups)
+df(28.054,df1=4,df2=1165) #prob of having an exact f
+pf(28.054,df1=4,df2=1165) #prob ov having f <28.054
+rf(28.054,df1=4,df2=1165) #generate random numbers
+#dist
+F.xs=seq(from=-100,to=100,by=0.01)
+F.ys=df(F.xs,df1=4,df2=1165)
+plot(F.xs,F.ys,main="F(4,1165) distribution",xlab="",ylab="", col="sienna", type="l",lty=2,xlim=c(-2,10),ylim=c(0,1))

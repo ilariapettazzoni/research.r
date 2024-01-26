@@ -515,7 +515,46 @@ summary(linear.model1)
 
 plot(budget,ratings,pch=15,col="lavender")
 abline(a=linear.model1$coefficients[1],b=linear.model1$coefficients[2])
+#________________________________
+26/01/24
 
 
+chisq.test(c(30,253,152))
+chisq.test(c(30,253,152), p =c(0.25,0.5,0.25))
 
 
+dchisq(1,df=2)
+#[1] 0.3032653
+dchisq(80.021,df=2)
+#[1] 2.10199e-18
+pchisq(80.021,df=2) #area under the curve, will always be 1
+#[1] 1
+rchisq(80.021,df=2)
+---
+movie.matrix=matrix(c(1,29,50,203,18,134),ncol=2,byrow=T)
+chisq.test(movie.matrix)
+
+	#Pearson's Chi-squared test
+
+#data:  movie.matrix
+#X-squared = 8.2535, df = 2, p-value = 0.01614
+
+ANOVA
+dim(movies.subsample)
+colnames(movies.subsample)
+action.ratings=movies.subsample$rating[movies.subsample$Action==1]
+animation.ratings=movies.subsample$rating[movies.subsample$Animation==1]
+comedy.ratings=movies.subsample$rating[movies.subsample$Comedy==1]
+drama.ratings=movies.subsample$rating[movies.subsample$Drama==1]
+Romance.ratings=movies.subsample$rating[movies.subsample$Romance==1]
+length(action.ratings)+length(animation.ratings)
+anova.ratings=c(action.ratings,animation.ratings,comedy.ratings,drama.ratings,drama.ratings,Romance.ratings)
+anova.groups=c(rep("Action",length(action.ratings)),rep("Animation",length(animation.ratings),rep("Comedy",length(comedy.ratings)),rep("Drama",length(drama.ratings)),rep("Romance",length(Romance.ratings)))
+anova.movies=aov(anova.ratings~anova.groups)
+df(28.054,df1=4,df2=1165) #prob of having an exact f
+pf(28.054,df1=4,df2=1165) #prob ov having f <28.054
+rf(28.054,df1=4,df2=1165) #generate random numbers
+#dist
+F.xs=seq(from=-100,to=100,by=0.01)
+F.ys=df(F.xs,df1=4,df2=1165)
+plot(F.xs,F.ys,main="F(4,1165) distribution",xlab="",ylab="", col="sienna", type="l",lty=2,xlim=c(-2,10),ylim=c(0,1))

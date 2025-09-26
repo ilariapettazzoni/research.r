@@ -1,0 +1,6 @@
+setwd("/Users/ilari/Desktop/")
+
+# importing gas exchange data
+licor_1 <- read.csv("data/final_version_with_comment_1a - Copia.csv", sep = ";",
+header = TRUE, dec =",")
+licor_1$treatment <- factor(licor_1$treatment)

@@ -1,6 +1,55 @@
 setwd("/Users/ilari/Desktop/")
 
 # importing gas exchange data
-licor_1 <- read.csv("data/final_version_with_comment_1a - Copia.csv", sep = ";",
-header = TRUE, dec =",")
+licor_1 <- read.csv("Licmeasure.csv", sep = ";", header = TRUE, dec = ",")
+
 licor_1$treatment <- factor(licor_1$treatment)
+licor_1$Date <- as.factor(licor_1$Date)
+
+# creating A/Ci column
+licor_1$A  <- as.numeric(licor_1$A)
+licor_1$Ci <- as.numeric(licor_1$Ci)
+licor_1$A.Ci <- licor_1$A/licor_1$Ci
+
+# removing outliers
+licor_2 <- subset(licor_1, licor_1$comment != "outlier")
+#calculating the average of the three values per leaf
+library(dplyr)
+
+cols_to_convert <- 4:ncol(licor_2)  # tutte le colonne a partire dalla 4ª
+
+# Convertiamo tutte queste colonne in numeric
+licor_2[cols_to_convert] <- lapply(licor_2[cols_to_convert], function(x) as.numeric(as.character(x)))
+licor_2$Date <- factor(licor_2$Date)
+
+#calculating the average of the three values per leaf
+library(dplyr)
+licor_avg_1 <- licor_2%>%
+  group_by(treatment, Date, Sample, Leaf)%>%
+  dplyr::summarise(avg.E_1=mean(E), avg.A_1=mean(A), avg.Ca_1=mean(Ca),
+  avg.Ci_1=mean(Ci), avg.gsw_1=mean(gsw), avg.A.Ci_1=mean(A.Ci),
+  avg.VPcham_1=mean(VPcham), avg.VPDleaf_1=mean(VPDleaf),
+  avg.Q_1=mean(Qamb_out))%>%
+  as.data.frame()
+
+# calculating the average of measurements for each tree on each day
+licor_avg_2 <- licor_avg_1%>%
+  group_by(treatment, Date, Sample, Leaf)%>%
+  dplyr::summarise(avg.E_2=mean(avg.E_1), avg.A_2=mean(avg.A_1),
+  avg.Ca_2=mean(avg.Ca_1), avg.Ci_2=mean(avg.Ci_1), avg.gsw_2=mean(avg.gsw_1),
+  avg.A.Ci_2=mean(avg.A.Ci_1), avg.VPcham_2=mean(avg.VPcham_1),
+  avg.VPDleaf_2=mean(avg.VPDleaf_1), avg.Q_2=mean(avg.Q_1))%>%
+  as.data.frame()
+
+
+# converting batch from numeric to factor
+licor_avg_2$batch <- factor(licor_avg_2$batch)
+
+# GAS EXCHANGE VARIABLES  ̃ BATCH + TREATMENT
+library(rcompanion)
+# Scheirer{Ray{Hare test (nonparametric test used for two-way
+factorial design) - all significant
+SRH_A <- scheirerRayHare(avg.A_2 ~ Date + treatment, data=licor_avg_2)
+SHR_E <- scheirerRayHare(avg.E_2 ~ Date + treatment, data=licor_avg_2)
+SHR_gsw <- scheirerRayHare(avg.gsw_2 ~ Date + treatment, data=licor_avg_2)
+SHR_A.Ci <- scheirerRayHare(avg.A.Ci_2 ~ Date + treatment, data=licor_avg_2)

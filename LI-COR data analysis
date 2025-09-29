@@ -1,7 +1,7 @@
 setwd("/Users/ilari/Desktop/")
 
 # importing gas exchange data
-licor_1 <- read.csv("Licmeasure.csv", sep = ";", header = TRUE, dec = ",")
+licor_1 <- read.csv("Licmeasure_pulito.csv", sep = ";", header = TRUE, dec = ",")
 
 licor_1$treatment <- factor(licor_1$treatment)
 licor_1$Date <- as.factor(licor_1$Date)
@@ -11,8 +11,9 @@ licor_1$A  <- as.numeric(licor_1$A)
 licor_1$Ci <- as.numeric(licor_1$Ci)
 licor_1$A.Ci <- licor_1$A/licor_1$Ci
 
+licor_2 <-licor_1
 # removing outliers
-licor_2 <- subset(licor_1, licor_1$comment != "outlier")
+#licor_2 <- subset(licor_1, licor_1$comment != "outlier")
 #calculating the average of the three values per leaf
 library(dplyr)
 
@@ -42,14 +43,34 @@ licor_avg_2 <- licor_avg_1%>%
   as.data.frame()
 
 
-# converting batch from numeric to factor
-licor_avg_2$batch <- factor(licor_avg_2$batch)
+
 
 # GAS EXCHANGE VARIABLES  ̃ BATCH + TREATMENT
 library(rcompanion)
-# Scheirer{Ray{Hare test (nonparametric test used for two-way
-factorial design) - all significant
+# Scheirer{Ray{Hare test (nonparametric test used for two-way factorial design) - all significant
 SRH_A <- scheirerRayHare(avg.A_2 ~ Date + treatment, data=licor_avg_2)
 SHR_E <- scheirerRayHare(avg.E_2 ~ Date + treatment, data=licor_avg_2)
 SHR_gsw <- scheirerRayHare(avg.gsw_2 ~ Date + treatment, data=licor_avg_2)
 SHR_A.Ci <- scheirerRayHare(avg.A.Ci_2 ~ Date + treatment, data=licor_avg_2)
+
+
+# checking whether individual treatment are significant
+# by creating subsets for each batch
+licor_avg_b1 <- subset(licor_avg_2, licor_avg_2$treatment == "1")
+licor_avg_b2 <- subset(licor_avg_2, licor_avg_2$treatment == "2")
+licor_avg_b4 <- subset(licor_avg_2, licor_avg_2$treatment == "4")
+
+kr_by_date <- licor_avg_2 %>%
+  group_by(Date) %>%
+  filter(n_distinct(treatment) > 1) %>%  # solo giorni con almeno due treatment
+  summarise(kr = list(kruskal.test(avg.A.Ci_2 ~ treatment)), .groups = "drop")
+
+# Kruskal-Wallis test:
+# batches are not individually significant for A/Ci
+
+kr_1 <- kruskal.test(licor_avg_b1$avg.A.Ci_2  ~ licor_avg_b1$treatment)
+# p-value=0.1
+kr_2 <- kruskal.test(licor_avg_b2$avg.A.Ci_2  ~ licor_avg_b2$treatment)
+# p-value=0.37
+kr_4 <- kruskal.test(licor_avg_b4$avg.A.Ci_2  ~ licor_avg_b4$treatment)
+# p-value=0.01
